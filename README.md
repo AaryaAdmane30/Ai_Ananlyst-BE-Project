@@ -88,6 +88,26 @@ class-transformer multer pdf-parse @nestjs/config axios
 npm install -D @types/multer @types/pdf-parse
 
 
+1️⃣ Install Prisma & Client
+npm install prisma --save-dev
+npm install @prisma/client
+
+📌 2️⃣ Initialize Prisma
+
+Creates prisma folder + schema
+
+npx prisma init
+Whenever you update schema.prisma
+
+
+6️⃣ Apply Schema to DB Without Migration (Dev quick sync)
+npx prisma db push
+
+
+7️⃣ View Database in Browser (🔥 Best Feature)
+npx prisma studio
+
+npx prisma migrate dev
 
 Step 4: Authentication Module (JWT)
 Generate module:

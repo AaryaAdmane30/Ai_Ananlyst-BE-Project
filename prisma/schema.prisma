@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+ 
+}
+
+// 1. Users (Managers, Developers, Admins)
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         Role
+  companyName  String?
+  contactInfo  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  teamMembers  TeamMember[]
+  managedProjects Project[]
+}
+
+// 2. Team Members (Skill Profiles)
+model TeamMember {
+  id                  String   @id @default(uuid())
+  role                String   // e.g., "Backend Developer", "Frontend", "DevOps"
+  availabilityHours   Int      @default(40)  // Weekly available hours
+  currentWorkload     Int      @default(0)   // Current assigned hours
+
+  // Relations
+  user                User     @relation(fields: [userId], references: [id])
+  userId              String
+
+  skills              Skill[]
+  tasks               Task[]
+  performanceHistory  PerformanceHistory[]
+
+  @@unique([userId]) // One team member profile per user
+}
+
+// 3. Skills
+model Skill {
+  id             String  @id @default(uuid())
+  skillName      String
+  level          String  // e.g., "Expert", "Proficient", "Intermediate", "Beginner"
+  experienceYears Int?
+
+  member         TeamMember @relation(fields: [memberId], references: [id])
+  memberId       String
+
+  @@unique([memberId, skillName]) // Prevent duplicate skills per member
+}
+
+// 4. Projects
+model Project {
+  id                  String   @id @default(uuid())
+  name                String
+  description         String?
+  manager             User     @relation(fields: [managerId], references: [id])
+  managerId           String
+  startDate           DateTime?
+  endDate             DateTime?
+  status              String   @default("PLANNED") // PLANNED, ONGOING, COMPLETED, CANCELLED
+
+  // Cost Optimization Fields
+  laborCost           Float?   @default(0)     // Calculated or manual
+  reworkCost          Float?   @default(0)
+  infrastructureCost  Float?   @default(0)
+  totalSavings        Float?   @default(0)     // AI-suggested savings
+
+  epics               Epic[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+// 5. Epics
+model Epic {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+
+  project     Project @relation(fields: [projectId], references: [id])
+  projectId   String
+
+  tasks       Task[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 6. Tasks
+model Task {
+  id               String   @id @default(uuid())
+  title            String
+  description      String?
+  requiredSkills   String[] // Array of skill names, e.g., ["React", "Node.js", "PostgreSQL"]
+  priority         String   @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  status           String   @default("PENDING") // PENDING, IN_PROGRESS, REVIEW, DONE
+  estimatedHours   Int?
+  startDate        DateTime?
+  endDate          DateTime?
+  dependencyTaskId String?  // Self-referencing: depends on another task
+
+  // Relations
+  epic             Epic     @relation(fields: [epicId], references: [id])
+  epicId           String
+
+  assignedTo       TeamMember? @relation(fields: [assignedToId], references: [id])
+  assignedToId     String?
+
+  // For dependency
+  dependsOn        Task?    @relation("TaskDependencies", fields: [dependencyTaskId], references: [id])
+  blockedBy        Task[]   @relation("TaskDependencies")
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// 7. Performance History (For AI Learning & Assignment Optimization)
+model PerformanceHistory {
+  id                String  @id @default(uuid())
+  taskType          String  // e.g., "API Development", "UI Design", "Database Schema"
+  avgCompletionTime Float?  // Average hours taken historically
+  qualityScore      Float?  // 0-10 scale (from reviews or rework rate)
+  completedTasks    Int     @default(0)
+
+  member            TeamMember @relation(fields: [memberId], references: [id])
+  memberId          String
+
+  updatedAt         DateTime @updatedAt
+
+  @@unique([memberId, taskType])
+}
+
+// 8. Role Enum
+enum Role {
+  MANAGER
+  DEVELOPER
+  ADMIN
+}

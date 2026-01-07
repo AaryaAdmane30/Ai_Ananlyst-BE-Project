@@ -102,3 +102,55 @@ You can now:
 Hit POST http://localhost:3000/auth/register
 
 Hit POST http://localhost:3000/auth/login
+
+
+
+nest g module users
+nest g controller users
+nest g service users
+
+nest g module team-members
+nest g controller team-members
+nest g service team-members
+
+nest g module skills
+nest g controller skills
+nest g service skills
+
+nest g module projects
+nest g controller projects
+nest g service projects
+
+nest g module epics
+nest g controller epics
+nest g service epics
+
+nest g module tasks
+nest g controller tasks
+nest g service tasks
+
+nest g module ai
+nest g controller ai
+nest g service ai
+
+
+Register: POST /auth/register {email, password, role}
+Login: POST /auth/login → Get JWT
+Create TeamMember: POST /team-members {name, role, userId}
+Upload Resume: POST /team-members/:id/upload-resume (with file)
+Create Epic: POST /epics {description, projectId}
+Process Epic: POST /epics/:id/process
+
+
+
+3. Core Modules
+
+Generated using NestJS CLI:
+
+nest g module users
+nest g module team-members
+nest g module skills
+nest g module projects
+nest g module epics
+nest g module tasks
+nest g module ai

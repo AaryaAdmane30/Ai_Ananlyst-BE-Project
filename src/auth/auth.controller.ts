@@ -1,21 +1,7 @@
-// src/auth/auth.controller.ts
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Role } from '@prisma/client'; // ← Important: Import Prisma enum
-
-class RegisterDto {
-  name: string;
-  email: string;
-  password: string;
-  role: Role; // ← Use Prisma's Role enum
-  companyName?: string;
-  contactInfo?: string;
-}
-
-class LoginDto {
-  email: string;
-  password: string;
-}
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {

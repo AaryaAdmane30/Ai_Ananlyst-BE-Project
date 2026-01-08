@@ -53,8 +53,8 @@ model Project {
   name        String
   description String?
 
-  ownerId String?
-  owner   User?   @relation(fields: [ownerId], references: [id])
+ managerId String?  // keep this
+  manager   User?    @relation(fields: [managerId], references: [id]) // restore manager relation
 
   startDate DateTime?      // optional start date
   endDate   DateTime?      // optional end date
@@ -94,21 +94,8 @@ model Epic {
   workflowRuns WorkflowRun[]
 }
 
-// 7. Performance Model 
-model Performance {
-  id                String @id @default(uuid())
-  taskType          String // "API Development", "UI Design"
-  avgCompletionTime Float? // in hours
-  qualityScore      Int? // 0–10
-  completedTasks    Int    @default(0)
 
-  memberId String
-  member   TeamMember? @relation(fields: [memberId], references: [id])
-
-  createdAt DateTime @default(now())
-}
-
-// 8. Team Member Model (People Working Under Manager)
+// 7. Team Member Model (People Working Under Manager)
 model TeamMember {
   id    String  @id @default(uuid())
   name  String?
@@ -123,12 +110,44 @@ model TeamMember {
   userId            String?
 
   performances Performance[]
+  skills Skill[]
+
+
+  
+
+  createdAt DateTime @default(now())
+}
+
+// 8. Performance Model 
+model Performance {
+  id                String @id @default(uuid())
+  taskType          String // "API Development", "UI Design"
+  avgCompletionTime Float? // in hours
+  qualityScore      Int? // 0–10
+  completedTasks    Int    @default(0)
+
+  memberId String
+  member   TeamMember? @relation(fields: [memberId], references: [id])
+
+  
 
   createdAt DateTime @default(now())
 }
 
 
-// 9. Task Model (Atomic Work Unit)
+// 9. Skills model
+
+model Skill {
+  id          String @id @default(uuid())
+  skillName        String
+  description String?
+  memberId    String?
+  member      TeamMember? @relation(fields: [memberId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+
+// 10. Task Model (Atomic Work Unit)
 model Task {
   id          String     @id @default(uuid()) // Task ID
   title       String // Task title
@@ -148,7 +167,7 @@ model Task {
   costs Cost[] // Task costs
 }
 
-// 10. AI Model (AI-Generated Suggestions)
+// 11. AI Model (AI-Generated Suggestions)
 model Ai {
   id                 String  @id @default(uuid()) // AI record ID
   laborCost          Float? // Estimated labor cost
@@ -168,7 +187,7 @@ model Ai {
   aiFeedback AiFeedback[] // AI cost estimates
 }
 
-// 111. Risk Model (Issues & Threats)
+// 12. Risk Model (Issues & Threats)
 model Risk {
   id          String  @id @default(uuid()) // Risk ID
   type        String // Risk type
@@ -191,7 +210,7 @@ model Risk {
   updatedAt DateTime @updatedAt
 }
 
-// 12. Cost Model (Financial Tracking)
+// 13. Cost Model (Financial Tracking)
 model Cost {
   id                 String  @id @default(uuid()) // Cost ID
   laborCost          Float?  @default(0) // Labor expenses
@@ -216,7 +235,7 @@ model Cost {
   updatedAt DateTime @updatedAt
 }
 
-// 13. AI FEEDBACK
+// 14. AI FEEDBACK
 model AiFeedback {
   id        String   @id @default(uuid())
   aiId      String
@@ -227,7 +246,7 @@ model AiFeedback {
   ai Ai @relation(fields: [aiId], references: [id])
 }
 
-// 14. WORKFLOW RUN (Orchestrator logs)
+// 15. WORKFLOW RUN (Orchestrator logs)
 model WorkflowRun {
   id         String    @id @default(uuid())
   epicId     String // required, because every workflow run must belong to an epic
@@ -239,7 +258,7 @@ model WorkflowRun {
   epic Epic @relation(fields: [epicId], references: [id])
 }
 
-// 15. NOTIFICATION (For manager alerts)
+// 16. NOTIFICATION (For manager alerts)
 model Notification {
   id        String   @id @default(uuid())
   userId    String
@@ -250,7 +269,7 @@ model Notification {
   user User @relation(fields: [userId], references: [id])
 }
 
-// 16. AGENT METADATA
+// 17. AGENT METADATA
 model Agent {
   id          String   @id @default(uuid())
   name        String // ResumeAgent, AssignmentAgent, etc

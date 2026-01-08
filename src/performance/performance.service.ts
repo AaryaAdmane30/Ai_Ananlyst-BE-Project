@@ -1,4 +1,3 @@
-// src/performance/performance.service.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
@@ -8,39 +7,32 @@ import { UpdatePerformanceDto } from './dto/update-performance.dto';
 export class PerformanceService {
   constructor(private prisma: PrismaService) {}
 
-  // Create new performance history entry
   create(dto: CreatePerformanceDto) {
-    return this.prisma.performanceHistory.create({
-      data: dto,
-    });
+    return this.prisma.performance.create({ data: dto }); // ✅ use model name in schema
   }
 
-  // Get all performance entries
   findAll() {
-    return this.prisma.performanceHistory.findMany({
-      include: { member: true }, // Include team member info
+    return this.prisma.performance.findMany({
+      include: { member: true }, // ✅ matches schema relation
     });
   }
 
-  // Get a single performance entry by ID
   findOne(id: string) {
-    return this.prisma.performanceHistory.findUnique({
+    return this.prisma.performance.findUnique({
       where: { id },
       include: { member: true },
     });
   }
 
-  // Update performance entry
   update(id: string, dto: UpdatePerformanceDto) {
-    return this.prisma.performanceHistory.update({
+    return this.prisma.performance.update({
       where: { id },
       data: dto,
     });
   }
 
-  // Delete performance entry
   remove(id: string) {
-    return this.prisma.performanceHistory.delete({
+    return this.prisma.performance.delete({
       where: { id },
     });
   }

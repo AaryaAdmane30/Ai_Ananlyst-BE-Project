@@ -17,6 +17,7 @@ import { EpicModule } from './epics/epic.module';
 import { TaskModule } from './tasks/task.module';
 import { AiModule } from './ai/ai.module';
 import { PerformanceModule } from './performance/performance.module';
+import { RiskModule } from './risk/risk.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PerformanceModule } from './performance/performance.module';
     TaskModule,
     AiModule,
     PerformanceModule,
+    RiskModule,
   ],
   controllers: [AppController],
   providers: [

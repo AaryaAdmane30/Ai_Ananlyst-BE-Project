@@ -18,6 +18,11 @@ import { TaskModule } from './tasks/task.module';
 import { AiModule } from './ai/ai.module';
 import { PerformanceModule } from './performance/performance.module';
 import { RiskModule } from './risk/risk.module';
+import { CostModule } from './cost/cost.module';
+import { AiFeedbackModule } from './ai-feedback/ai-feedback.module';
+import { WorkflowModule } from './workflow/workflow.module';
+import { NotificationModule } from './notification/notification.module';
+import { AgentModule } from './agent/agent.module';
 
 @Module({
   imports: [
@@ -31,6 +36,11 @@ import { RiskModule } from './risk/risk.module';
     AiModule,
     PerformanceModule,
     RiskModule,
+    CostModule,
+    AiFeedbackModule,
+    WorkflowModule,
+    NotificationModule,
+    AgentModule,
   ],
   controllers: [AppController],
   providers: [

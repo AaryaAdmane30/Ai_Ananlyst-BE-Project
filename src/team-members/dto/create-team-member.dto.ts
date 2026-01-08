@@ -1,6 +1,20 @@
 export class CreateTeamMemberDto {
-  role: string;              // e.g., "Backend Developer"
-  availabilityHours?: number; // optional, defaults to 40
-  currentWorkload?: number;   // optional, defaults to 0
-  userId: string;            // REQUIRED — links to User
+
+  role: string;
+  // 1. Functional role of the team member
+  //    Example: "Backend Developer", "Frontend Developer"
+
+  availabilityHours?: number;
+  
+  currentWorkload?: number;
+  
+
+  hourlyRate?: number;
+  
+
+  preferences?: Record<string, any>;
+  
+
+  userId: string;
+  
 }

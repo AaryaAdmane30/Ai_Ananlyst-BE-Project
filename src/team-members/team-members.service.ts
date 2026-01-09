@@ -34,7 +34,7 @@ export class TeamMemberService {
   findAll() {
     return this.prisma.teamMember.findMany({
       include: {
-        performances: true, // ✅ matches schema
+        performances: true, 
       },
     });
   }
@@ -44,7 +44,7 @@ export class TeamMemberService {
     return this.prisma.teamMember.findUnique({
       where: { id },
       include: {
-        performances: true, // ✅ matches schema
+        performances: true, 
       },
     });
   }

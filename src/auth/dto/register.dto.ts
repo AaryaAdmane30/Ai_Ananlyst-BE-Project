@@ -8,3 +8,6 @@ export class RegisterDto {
   companyName?: string;
   contactInfo?: string;
 }
+
+
+// http://localhost:3000/auth/register

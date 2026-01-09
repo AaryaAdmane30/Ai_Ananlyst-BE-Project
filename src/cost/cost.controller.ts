@@ -1,4 +1,4 @@
-// src/cost/cost.controller.ts
+
 import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { CostService } from './cost.service';
 import { CreateCostDto } from './dto/create-cost.dto';

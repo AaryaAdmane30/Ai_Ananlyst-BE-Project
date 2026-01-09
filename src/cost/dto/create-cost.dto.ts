@@ -1,4 +1,4 @@
-// src/cost/dto/create-cost.dto.ts
+
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateCostDto {

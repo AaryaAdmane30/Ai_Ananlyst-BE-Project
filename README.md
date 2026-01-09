@@ -104,8 +104,12 @@ Whenever you update schema.prisma
 npx prisma db push
 
 
-7️⃣ View Database in Browser (🔥 Best Feature)
+7️⃣ View Database in Browser
 npx prisma studio
+
+
+Push DB + Migration
+npx prisma migrate dev --name first_migration
 
 npx prisma migrate dev
 

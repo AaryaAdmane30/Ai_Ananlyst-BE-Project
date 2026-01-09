@@ -1,7 +1,7 @@
 import { Role } from '@prisma/client';
 
 export class CreateTeamMemberDto {
-  role: Role;  // ✅ use Prisma enum
+  role: Role;  //  use Prisma enum
   availabilityHours?: number;
   currentWorkload?: number;
   hourlyRate?: number;

@@ -1,4 +1,4 @@
-// src/notification/notification.controller.ts
+
 import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';

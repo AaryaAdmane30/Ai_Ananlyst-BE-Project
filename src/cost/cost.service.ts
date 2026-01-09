@@ -1,4 +1,4 @@
-// src/cost/cost.service.ts
+
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCostDto } from './dto/create-cost.dto';

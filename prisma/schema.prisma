@@ -170,6 +170,7 @@ model Task {
 // 11. AI Model (AI-Generated Suggestions)
 model Ai {
   id                 String  @id @default(uuid()) // AI record ID
+   type               String?  // <-- add this line
   laborCost          Float? // Estimated labor cost
   reworkCost         Float? // Estimated rework cost
   infrastructureCost Float? // Infra cost

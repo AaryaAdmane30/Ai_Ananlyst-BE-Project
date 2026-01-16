@@ -4,13 +4,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 // import { PrismaService } from './prisma/prisma.service';
 
-import { AuthModule } from './AuthenticationService/auth/auth.module';
-import { JwtAuthGuard } from './AuthenticationService/auth/jwt.guard';
+import { AuthModule } from './auth/auth/auth.module';
+import { JwtAuthGuard } from './auth/auth/jwt.guard';
 import { PrismaModule } from './prisma/prisma.module';
 
 
-import { UsersModule } from './AuthenticationService/users/users.module';
-import { TeamMemberModule } from './AuthenticationService/team-members/team-members.module';
+import { UsersModule } from './users/users.module';
+import { TeamMemberModule } from './team-members/team-members.module';
 import { SkillModule } from './skills/skill.module';
 import { ProjectModule } from './projects/project.module';
 import { EpicModule } from './epics/epic.module';

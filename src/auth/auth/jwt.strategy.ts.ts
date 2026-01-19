@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
@@ -14,6 +14,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return { userId: payload.sub, email: payload.email, role: payload.role };
+    // Debugging: Agar abhi bhi error aaye toh terminal mein check karna kya print ho raha hai
+    // console.log('Strategy Payload:', payload);
+
+    if (!payload) {
+      throw new UnauthorizedException();
+    }
+
+    // FIX: NextAuth ke liye payload.id ya payload.sub dono check karo
+    return { 
+      id: payload.id || payload.sub, 
+      email: payload.email, 
+      role: payload.role 
+    };
   }
 }

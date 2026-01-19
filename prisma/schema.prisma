@@ -1,0 +1,283 @@
+// 1. Prisma Client Generator
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. Database Connection
+datasource db {
+  provider = "postgresql"
+}
+
+
+// 3. User Role Enum 
+enum Role {
+  ADMIN
+  MANAGER
+  DEVELOPER
+
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum AiStatus {
+  PROPOSED
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+// 4. User Model (Base Authentication Entity)
+model User {
+  id       String @id @default(uuid()) // Primary key
+  name     String // Full name
+  email    String @unique // Login email
+  password String // Hashed password
+  role     Role // ADMIN / MANAGER / DEVELOPER
+
+  companyName String? // Optional company info
+  contactInfo String? // Phone or other contact
+
+  createdAt DateTime @default(now()) // Record creation time
+  updatedAt DateTime @updatedAt // Auto-update on change
+
+  projects Project[] // Projects owned by user
+
+  notifications Notification[]
+}
+
+// 5. Project Model (Top-level Work Container)
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+
+ managerId String?  // keep this
+  manager   User?    @relation(fields: [managerId], references: [id]) // restore manager relation
+
+  startDate DateTime?      // optional start date
+  endDate   DateTime?      // optional end date
+  status    String?        // optional status like "TODO", "IN_PROGRESS", "COMPLETED"
+
+  laborCost          Float? @default(0)
+  reworkCost         Float? @default(0)
+  infrastructureCost Float? @default(0)
+  totalSavings       Float? @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  epics Epic[]
+  tasks Task[]
+  ais   Ai[]
+  risks Risk[]
+  costs Cost[]
+}
+
+
+// 6. Epic Model (Task Grouping)
+model Epic {
+  id          String  @id @default(uuid()) // Epic ID
+  title       String // Epic title
+  description String? // Epic details
+
+  projectId String // Linked project
+  project   Project @relation(fields: [projectId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks        Task[] // Tasks under epic
+  risks        Risk[] // Epic-level risks
+  costs        Cost[] // Epic-level costs
+  workflowRuns WorkflowRun[]
+}
+
+
+// 7. Team Member Model (People Working Under Manager)
+model TeamMember {
+  id    String  @id @default(uuid())
+  name  String?
+  email String?
+  role  Role?
+  managerId String?
+
+  availabilityHours Int?      @default(40)
+  currentWorkload   Int?      @default(0)
+  hourlyRate        Float?
+  preferences       Json?
+  userId            String?
+
+  performances Performance[]
+  skills Skill[]
+
+
+  
+
+  createdAt DateTime @default(now())
+}
+
+// 8. Performance Model 
+model Performance {
+  id                String @id @default(uuid())
+  taskType          String // "API Development", "UI Design"
+  avgCompletionTime Float? // in hours
+  qualityScore      Int? // 0–10
+  completedTasks    Int    @default(0)
+
+  memberId String
+  member   TeamMember? @relation(fields: [memberId], references: [id])
+
+  
+
+  createdAt DateTime @default(now())
+}
+
+
+// 9. Skills model
+
+model Skill {
+  id          String @id @default(uuid())
+  skillName        String
+  description String?
+  memberId    String?
+  member      TeamMember? @relation(fields: [memberId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+
+// 10. Task Model (Atomic Work Unit)
+model Task {
+  id          String     @id @default(uuid()) // Task ID
+  title       String // Task title
+  description String? // Task details
+  status      TaskStatus @default(TODO) // Task state
+
+  projectId String? // <-- made optional temporarily
+  epicId    String? // Optional epic reference
+
+  project Project? @relation(fields: [projectId], references: [id])
+  epic    Epic?    @relation(fields: [epicId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  risks Risk[] // Task risks
+  costs Cost[] // Task costs
+}
+
+// 11. AI Model (AI-Generated Suggestions)
+model Ai {
+  id                 String  @id @default(uuid()) // AI record ID
+   type               String?  // <-- add this line
+  laborCost          Float? // Estimated labor cost
+  reworkCost         Float? // Estimated rework cost
+  infrastructureCost Float? // Infra cost
+  totalSavings       Float? // Predicted savings
+  description        String? // AI explanation
+
+  projectId String // Linked project
+  project   Project @relation(fields: [projectId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt // <-- made optional temporarily
+
+  risks      Risk[] // AI-detected risks
+  costs      Cost[] // AI cost estimates
+  aiFeedback AiFeedback[] // AI cost estimates
+}
+
+// 12. Risk Model (Issues & Threats)
+model Risk {
+  id          String  @id @default(uuid()) // Risk ID
+  type        String // Risk type
+  severity    String  @default("MEDIUM") // LOW / MEDIUM / HIGH
+  description String? // Risk explanation
+  mitigation  String? // How to reduce risk
+  resolved    Boolean @default(false) // Status flag
+
+  taskId    String? // Optional task link
+  epicId    String? // Optional epic link
+  projectId String? // Optional project link
+  aiId      String? // Optional AI link
+
+  task    Task?    @relation(fields: [taskId], references: [id])
+  epic    Epic?    @relation(fields: [epicId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+  ai      Ai?      @relation(fields: [aiId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 13. Cost Model (Financial Tracking)
+model Cost {
+  id                 String  @id @default(uuid()) // Cost ID
+  laborCost          Float?  @default(0) // Labor expenses
+  reworkCost         Float?  @default(0) // Rework expenses
+  infrastructureCost Float?  @default(0) // Infra expenses
+  otherCost          Float?  @default(0) // Misc expenses
+  totalCost          Float? // Final cost
+  savings            Float?  @default(0) // Savings achieved
+  description        String? // Notes
+
+  taskId    String? // Linked task
+  epicId    String? // Linked epic
+  projectId String? // Linked project
+  aiId      String? // Linked AI
+
+  task    Task?    @relation(fields: [taskId], references: [id])
+  epic    Epic?    @relation(fields: [epicId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+  ai      Ai?      @relation(fields: [aiId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 14. AI FEEDBACK
+model AiFeedback {
+  id        String   @id @default(uuid())
+  aiId      String
+  approved  Boolean?
+  comment   String?
+  createdAt DateTime @default(now())
+
+  ai Ai @relation(fields: [aiId], references: [id])
+}
+
+// 15. WORKFLOW RUN (Orchestrator logs)
+model WorkflowRun {
+  id         String    @id @default(uuid())
+  epicId     String // required, because every workflow run must belong to an epic
+  status     String    @default("PENDING") // PENDING / RUNNING / COMPLETED / FAILED
+  logs       Json?
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  epic Epic @relation(fields: [epicId], references: [id])
+}
+
+// 16. NOTIFICATION (For manager alerts)
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// 17. AGENT METADATA
+model Agent {
+  id          String   @id @default(uuid())
+  name        String // ResumeAgent, AssignmentAgent, etc
+  version     String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

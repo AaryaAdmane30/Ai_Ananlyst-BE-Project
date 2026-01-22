@@ -1,69 +1,432 @@
+// "use client";
+
+// import Link from "next/link";
+// import { usePathname } from "next/navigation";
+// import { useSession } from "next-auth/react";
+// import { useState } from "react";
+
+// import {
+//   FolderRoot,
+//   Layers,
+//   CheckCircle2,
+//   Sparkles,
+//   Users2,
+//   Wallet,
+//   AlertOctagon,
+//   ChevronRight,
+//   Bell,
+//   PanelLeftClose,
+//   PanelLeftOpen,
+// } from "lucide-react";
+
+// export default function Sidebar() {
+//   const pathname = usePathname();
+//   const { data: session } = useSession();
+//   const [collapsed, setCollapsed] = useState(false);
+
+//   const links = [
+//     { title: "Projects", href: "/dashboard/projects", icon: <FolderRoot size={18} /> },
+//     { title: "Epics", href: "/dashboard/epics", icon: <Layers size={18} /> },
+//     { title: "Tasks", href: "/dashboard/tasks", icon: <CheckCircle2 size={18} /> },
+//     { title: "AI Insights", href: "/dashboard/ai", icon: <Sparkles size={18} />, special: true },
+//     { title: "Team", href: "/dashboard/team", icon: <Users2 size={18} /> },
+//     { title: "Costs", href: "/dashboard/costs", icon: <Wallet size={18} /> },
+//     { title: "Risks", href: "/dashboard/risks", icon: <AlertOctagon size={18} /> },
+//   ];
+
+//   return (
+//     <aside
+//       className={`min-h-screen sticky top-0 border-r border-white/10 bg-white/[0.03] backdrop-blur-xl flex flex-col transition-all duration-300 ${
+//         collapsed ? "w-20 p-4" : "w-72 p-6"
+//       }`}
+//     >
+//       {/* Brand + Collapse Toggle */}
+//       <div className={`mb-8 flex items-center justify-between ${collapsed ? "px-0" : "px-1"}`}>
+//         <div className="flex items-center gap-3">
+//           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500/90 to-violet-500/90 flex items-center justify-center shadow-lg shadow-sky-500/20">
+//             <span className="text-white font-black text-xs tracking-wider">AI</span>
+//           </div>
+
+//           {!collapsed && (
+//             <div className="leading-tight">
+//               <p className="text-sm font-extrabold tracking-tight text-white">
+//                 AI Manager
+//               </p>
+//               <p className="text-[11px] font-semibold text-slate-400">
+//                 Pro Dashboard
+//               </p>
+//             </div>
+//           )}
+//         </div>
+
+//         <button
+//           onClick={() => setCollapsed((p) => !p)}
+//           className="p-2 rounded-2xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition"
+//         >
+//           {collapsed ? (
+//             <PanelLeftOpen size={18} className="text-slate-200" />
+//           ) : (
+//             <PanelLeftClose size={18} className="text-slate-200" />
+//           )}
+//         </button>
+//       </div>
+
+//       {/* Nav */}
+//       <nav className="flex-1">
+//         {!collapsed && (
+//           <p className="text-[10px] uppercase tracking-widest text-slate-500 font-black mb-4 px-2">
+//             Main Menu
+//           </p>
+//         )}
+
+//         <ul className="space-y-2">
+//           {links.map((link) => {
+//             const isActive = pathname.startsWith(link.href);
+
+//             return (
+//               <li key={link.href}>
+//                 <Link
+//                   href={link.href}
+//                   title={collapsed ? link.title : undefined}
+//                   className={`group flex items-center justify-between transition-all duration-200 border ${
+//                     collapsed ? "px-3 py-3 rounded-2xl" : "px-4 py-3 rounded-2xl"
+//                   } ${
+//                     isActive
+//                       ? "bg-white/[0.06] border-sky-500/25 text-white shadow-[0_0_25px_rgba(56,189,248,0.10)]"
+//                       : "bg-transparent border-transparent text-slate-300 hover:bg-white/[0.05] hover:border-white/10 hover:text-white"
+//                   }`}
+//                 >
+//                   <div className="flex items-center gap-3">
+//                     <span
+//                       className={`transition-colors ${
+//                         isActive
+//                           ? "text-sky-400"
+//                           : "text-slate-500 group-hover:text-sky-300"
+//                       }`}
+//                     >
+//                       {link.icon}
+//                     </span>
+
+//                     {!collapsed && (
+//                       <span className="text-sm font-bold">{link.title}</span>
+//                     )}
+//                   </div>
+
+//                   {!collapsed && isActive && (
+//                     <ChevronRight size={16} className="text-sky-300 animate-pulse" />
+//                   )}
+
+//                   {!collapsed && link.special && !isActive && (
+//                     <span className="text-[10px] bg-violet-500/15 text-violet-300 px-2 py-0.5 rounded-full border border-violet-500/25 font-bold">
+//                       New
+//                     </span>
+//                   )}
+//                 </Link>
+//               </li>
+//             );
+//           })}
+//         </ul>
+
+//         {/* Notifications */}
+//         <div className="pt-6">
+//           {!collapsed && (
+//             <p className="text-[10px] uppercase tracking-widest text-slate-500 font-black mb-4 px-2">
+//               System
+//             </p>
+//           )}
+
+//           <Link
+//             href="/dashboard/notifications"
+//             title={collapsed ? "Notifications" : undefined}
+//             className={`group flex items-center justify-between transition-all duration-200 border ${
+//               collapsed ? "px-3 py-3 rounded-2xl" : "px-4 py-3 rounded-2xl"
+//             } ${
+//               pathname === "/dashboard/notifications"
+//                 ? "bg-white/[0.06] border-white/10 text-white"
+//                 : "bg-transparent border-transparent text-slate-300 hover:bg-white/[0.05] hover:border-white/10 hover:text-white"
+//             }`}
+//           >
+//             <div className="flex items-center gap-3">
+//               <Bell
+//                 size={18}
+//                 className="text-slate-500 group-hover:text-sky-300 transition-colors"
+//               />
+//               {!collapsed && (
+//                 <span className="text-sm font-bold">Notifications</span>
+//               )}
+//             </div>
+
+//             {/* Badge */}
+//             <div className="flex items-center justify-center bg-rose-500/90 text-[10px] text-white font-black w-6 h-6 rounded-full shadow-lg shadow-rose-500/20 border border-rose-400/30">
+//               3
+//             </div>
+//           </Link>
+//         </div>
+//       </nav>
+
+//       {/* User footer */}
+//       <div className="mt-auto pt-6 border-t border-white/10">
+//         {session ? (
+//           <div
+//             className={`flex items-center gap-3 rounded-3xl bg-white/[0.04] border border-white/10 shadow-inner ${
+//               collapsed ? "p-3 justify-center" : "p-3"
+//             }`}
+//           >
+//             <div className="relative">
+//               {session.user?.image ? (
+//                 <img
+//                   src={session.user.image}
+//                   alt="user"
+//                   className="w-10 h-10 rounded-2xl object-cover border border-white/10"
+//                 />
+//               ) : (
+//                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500 to-violet-500 flex items-center justify-center text-white font-black">
+//                   {session.user?.name?.[0] || "U"}
+//                 </div>
+//               )}
+
+//               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-[#070A12] rounded-full"></div>
+//             </div>
+
+//             {!collapsed && (
+//               <div className="overflow-hidden">
+//                 <p className="text-sm font-extrabold text-white truncate leading-tight">
+//                   {session.user?.name || "Member"}
+//                 </p>
+//                 <p className="text-[10px] text-slate-500 truncate lowercase font-semibold mt-0.5">
+//                   {session.user?.email}
+//                 </p>
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <div
+//             className={`bg-white/[0.04] border border-white/10 rounded-3xl animate-pulse ${
+//               collapsed ? "h-14 w-full" : "h-14 w-full"
+//             }`}
+//           />
+//         )}
+//       </div>
+//     </aside>
+//   );
+// }
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { 
-  FolderRoot, 
-  Layers, 
-  CheckCircle2, 
-  Sparkles, 
-  Users2, 
-  Wallet, 
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  FolderRoot,
+  Layers,
+  CheckCircle2,
+  Sparkles,
+  Users2,
+  Wallet,
   AlertOctagon,
   ChevronRight,
-  Bell
+  Bell,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Activity,
 } from "lucide-react";
+
+import { api } from "@/lib/api";
+
+type NavLink = {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+  special?: boolean;
+};
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
-  const links = [
-    { title: "Projects", href: "/dashboard/projects", icon: <FolderRoot size={20} /> },
-    { title: "Epics", href: "/dashboard/epics", icon: <Layers size={20} /> },
-    { title: "Tasks", href: "/dashboard/tasks", icon: <CheckCircle2 size={20} /> },
-    { title: "AI Insights", href: "/dashboard/ai", icon: <Sparkles size={20} />, special: true },
-    { title: "Team", href: "/dashboard/team", icon: <Users2 size={20} /> },
-    { title: "Costs", href: "/dashboard/costs", icon: <Wallet size={20} /> },
-    { title: "Risks", href: "/dashboard/risks", icon: <AlertOctagon size={20} /> },
-  ];
+  const [collapsed, setCollapsed] = useState(false);
+  const [notifCount, setNotifCount] = useState<number>(0);
+  const [notifLoading, setNotifLoading] = useState(false);
+
+  const links: NavLink[] = useMemo(
+    () => [
+      {
+        title: "Projects",
+        href: "/dashboard/projects",
+        icon: <FolderRoot size={18} />,
+      },
+      {
+        title: "Epics",
+        href: "/dashboard/epics",
+        icon: <Layers size={18} />,
+      },
+      {
+        title: "Workflows",
+        href: "/dashboard/workflows",
+        icon: <Activity size={18} />,
+      },
+      {
+        title: "Tasks",
+        href: "/dashboard/tasks",
+        icon: <CheckCircle2 size={18} />,
+      },
+      {
+        title: "AI Insights",
+        href: "/dashboard/ai",
+        icon: <Sparkles size={18} />,
+        special: true,
+      },
+      {
+        title: "Team",
+        href: "/dashboard/team",
+        icon: <Users2 size={18} />,
+      },
+      {
+        title: "Costs",
+        href: "/dashboard/costs",
+        icon: <Wallet size={18} />,
+      },
+      {
+        title: "Risks",
+        href: "/dashboard/risks",
+        icon: <AlertOctagon size={18} />,
+      },
+    ],
+    []
+  );
+
+  const isActive = (href: string) => {
+    // ✅ Always highlight correct tab for nested pages too
+    // Example: /dashboard/projects/abc => still active for /dashboard/projects
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
+  // ✅ Fetch unread notifications count dynamically
+  useEffect(() => {
+    const fetchUnread = async () => {
+      // only fetch when logged in
+      if (status !== "authenticated") return;
+
+      try {
+        setNotifLoading(true);
+
+        /**
+         * Expected API:
+         * GET /notifications/unread-count
+         * Response: { count: number }
+         *
+         * If you don't have this endpoint yet, tell me,
+         * I'll give controller/service code for NestJS.
+         */
+        const res = await api.get("/notifications/unread-count");
+        setNotifCount(Number(res.data?.count || 0));
+      } catch (err) {
+        setNotifCount(0);
+      } finally {
+        setNotifLoading(false);
+      }
+    };
+
+    fetchUnread();
+  }, [status]);
 
   return (
-    <aside className="w-72 min-h-screen bg-[#030712]/60 backdrop-blur-xl border-r border-white/5 p-6 flex flex-col sticky top-0">
-      
-      {/* Brand Logo */}
-      <div className="mb-10 px-2">
-        <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent tracking-tight">
-          AI Manager <span className="text-xs font-medium text-blue-500/50">PRO</span>
-        </h2>
+    <aside
+      className={`min-h-screen sticky top-0 border-r border-white/10 bg-white/[0.03] backdrop-blur-xl flex flex-col transition-all duration-300 ${
+        collapsed ? "w-20 p-4" : "w-72 p-6"
+      }`}
+    >
+      {/* Brand + Collapse Toggle */}
+      <div
+        className={`mb-8 flex items-center justify-between ${
+          collapsed ? "px-0" : "px-1"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500/90 to-violet-500/90 flex items-center justify-center shadow-lg shadow-sky-500/20">
+            <span className="text-white font-black text-xs tracking-wider">
+              AI
+            </span>
+          </div>
+
+          {!collapsed && (
+            <div className="leading-tight">
+              <p className="text-sm font-extrabold tracking-tight text-white">
+                AI Manager
+              </p>
+              <p className="text-[11px] font-semibold text-slate-400">
+                Pro Dashboard
+              </p>
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={() => setCollapsed((p) => !p)}
+          className="p-2 rounded-2xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition active:scale-[0.98]"
+        >
+          {collapsed ? (
+            <PanelLeftOpen size={18} className="text-slate-200" />
+          ) : (
+            <PanelLeftClose size={18} className="text-slate-200" />
+          )}
+        </button>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex-1 space-y-1">
-        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-4 px-2">Main Menu</p>
+      {/* Nav */}
+      <nav className="flex-1">
+        {!collapsed && (
+          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-black mb-4 px-2">
+            Main Menu
+          </p>
+        )}
+
         <ul className="space-y-2">
           {links.map((link) => {
-            const isActive = pathname.startsWith(link.href);
+            const active = isActive(link.href);
+
             return (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`group flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${
-                    isActive
-                      ? "bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]"
-                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  title={collapsed ? link.title : undefined}
+                  className={`group flex items-center justify-between transition-all duration-200 border ${
+                    collapsed ? "px-3 py-3 rounded-2xl" : "px-4 py-3 rounded-2xl"
+                  } ${
+                    active
+                      ? "bg-white/[0.06] border-sky-500/25 text-white shadow-[0_0_25px_rgba(56,189,248,0.10)]"
+                      : "bg-transparent border-transparent text-slate-300 hover:bg-white/[0.05] hover:border-white/10 hover:text-white"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`${isActive ? "text-blue-400" : "text-gray-500 group-hover:text-blue-400 transition-colors"}`}>
+                    <span
+                      className={`transition-colors ${
+                        active
+                          ? "text-sky-400"
+                          : "text-slate-500 group-hover:text-sky-300"
+                      }`}
+                    >
                       {link.icon}
                     </span>
-                    <span className="text-sm font-medium">{link.title}</span>
+
+                    {!collapsed && (
+                      <span className="text-sm font-bold">{link.title}</span>
+                    )}
                   </div>
-                  {isActive && <ChevronRight size={14} className="animate-pulse" />}
-                  {link.special && !isActive && (
-                    <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">New</span>
+
+                  {!collapsed && active && (
+                    <ChevronRight
+                      size={16}
+                      className="text-sky-300 animate-pulse"
+                    />
+                  )}
+
+                  {!collapsed && link.special && !active && (
+                    <span className="text-[10px] bg-violet-500/15 text-violet-300 px-2 py-0.5 rounded-full border border-violet-500/25 font-bold">
+                      New
+                    </span>
                   )}
                 </Link>
               </li>
@@ -71,61 +434,105 @@ export default function Sidebar() {
           })}
         </ul>
 
-        {/* --- Notifications Section Added Here --- */}
+        {/* Notifications */}
         <div className="pt-6">
-          <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-4 px-2">System</p>
-          <Link
-            href="/dashboard/notifications"
-            className={`group flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
-              pathname === "/dashboard/notifications" 
-                ? "bg-white/10 text-white" 
-                : "text-gray-400 hover:bg-white/5 hover:text-white"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <Bell size={20} className="group-hover:rotate-12 transition-transform" />
-              <span className="text-sm font-medium">Notifications</span>
-            </div>
-            {/* Notification Badge - Real-time feeling */}
-            <div className="flex items-center justify-center bg-rose-500 text-[10px] text-white font-bold w-5 h-5 rounded-full shadow-lg shadow-rose-500/20">
-              3
-            </div>
-          </Link>
+          {!collapsed && (
+            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-black mb-4 px-2">
+              System
+            </p>
+          )}
+
+          {(() => {
+            const notifActive = isActive("/dashboard/notifications");
+
+            return (
+              <Link
+                href="/dashboard/notifications"
+                title={collapsed ? "Notifications" : undefined}
+                className={`group flex items-center justify-between transition-all duration-200 border ${
+                  collapsed ? "px-3 py-3 rounded-2xl" : "px-4 py-3 rounded-2xl"
+                } ${
+                  notifActive
+                    ? "bg-white/[0.06] border-sky-500/25 text-white shadow-[0_0_25px_rgba(56,189,248,0.10)]"
+                    : "bg-transparent border-transparent text-slate-300 hover:bg-white/[0.05] hover:border-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Bell
+                    size={18}
+                    className={`transition-colors ${
+                      notifActive
+                        ? "text-sky-400"
+                        : "text-slate-500 group-hover:text-sky-300"
+                    }`}
+                  />
+                  {!collapsed && (
+                    <span className="text-sm font-bold">Notifications</span>
+                  )}
+                </div>
+
+                {/* ✅ Dynamic Badge */}
+                {!collapsed && (
+                  <div className="flex items-center gap-2">
+                    {notifLoading ? (
+                      <div className="w-6 h-6 rounded-full bg-white/10 border border-white/10 animate-pulse" />
+                    ) : notifCount > 0 ? (
+                      <div className="flex items-center justify-center bg-rose-500/90 text-[10px] text-white font-black w-6 h-6 rounded-full shadow-lg shadow-rose-500/20 border border-rose-400/30">
+                        {notifCount > 99 ? "99+" : notifCount}
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-slate-400 flex items-center justify-center">
+                        0
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Link>
+            );
+          })()}
         </div>
       </nav>
 
-      {/* User Footer Section */}
-      <div className="mt-auto pt-6 border-t border-white/5">
+      {/* User footer */}
+      <div className="mt-auto pt-6 border-t border-white/10">
         {session ? (
-          <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/[0.02] border border-white/5 shadow-inner">
+          <div
+            className={`flex items-center gap-3 rounded-3xl bg-white/[0.04] border border-white/10 shadow-inner ${
+              collapsed ? "p-3 justify-center" : "p-3"
+            }`}
+          >
             <div className="relative">
               {session.user?.image ? (
                 <img
-                  src={session.user.image}
+                  src={session.user.image as string}
                   alt="user"
-                  className="w-10 h-10 rounded-xl object-cover border border-white/10"
+                  className="w-10 h-10 rounded-2xl object-cover border border-white/10"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500 to-violet-500 flex items-center justify-center text-white font-black">
                   {session.user?.name?.[0] || "U"}
                 </div>
               )}
-              {/* Green Online Indicator */}
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-[#030712] rounded-full"></div>
+
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-[#070A12] rounded-full" />
             </div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-semibold text-white truncate leading-tight">
-                {session.user?.name || "Member"}
-              </p>
-              <p className="text-[10px] text-gray-500 truncate lowercase">
-                {session.user?.email}
-              </p>
-            </div>
+
+            {!collapsed && (
+              <div className="overflow-hidden">
+                <p className="text-sm font-extrabold text-white truncate leading-tight">
+                  {session.user?.name || "Member"}
+                </p>
+                <p className="text-[10px] text-slate-500 truncate lowercase font-semibold mt-0.5">
+                  {session.user?.email}
+                </p>
+              </div>
+            )}
           </div>
         ) : (
-          <div className="h-12 w-full bg-white/5 rounded-xl animate-pulse" />
+          <div className="bg-white/[0.04] border border-white/10 rounded-3xl animate-pulse h-14 w-full" />
         )}
       </div>
     </aside>
   );
 }
+

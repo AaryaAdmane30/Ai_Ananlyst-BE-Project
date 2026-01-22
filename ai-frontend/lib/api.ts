@@ -210,6 +210,27 @@ export const deleteTask = async (id: string) => {
   return res.data;
 };
 
+
+
+//  WorkFlow 
+
+
+export async function fetchWorkflowRuns() {
+  const res = await api.get("/workflow");
+  return res.data;
+}
+
+export async function fetchWorkflowRunById(id: string) {
+  const res = await api.get(`/workflow/${id}`);
+  return res.data;
+}
+
+export async function deleteWorkflowRun(id: string) {
+  const res = await api.delete(`/workflow/${id}`);
+  return res.data;
+}
+
+
 // ----- AI -----
 export const fetchAi = async (): Promise<Ai[]> => {
   const res = await api.get("/ai");

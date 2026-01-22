@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { api } from "@/lib/api";
 
@@ -23,6 +24,17 @@ type Epic = {
   title: string;
   description?: string;
   projectId: string;
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const pop = {
+  hidden: { opacity: 0, scale: 0.96, y: 10 },
+  visible: { opacity: 1, scale: 1, y: 0 },
+  exit: { opacity: 0, scale: 0.98, y: 10 },
 };
 
 export default function EpicsPage() {
@@ -158,7 +170,7 @@ export default function EpicsPage() {
   if (loading) {
     return (
       <div className="h-[78vh] flex flex-col items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-sky-400 mb-3" />
+        <Loader2 className="w-10 h-10 animate-spin text-sky-300 mb-3" />
         <p className="text-slate-400 font-semibold">Loading epics...</p>
       </div>
     );
@@ -171,7 +183,7 @@ export default function EpicsPage() {
 
         <button
           onClick={fetchEpics}
-          className="mt-4 px-6 py-3 rounded-2xl bg-white/[0.06] border border-white/10 hover:bg-white/[0.10] text-white font-black transition"
+          className="mt-4 px-6 py-3 rounded-2xl bg-white/[0.06] border border-white/10 hover:bg-white/[0.10] text-white font-extrabold transition active:scale-[0.98]"
         >
           Retry
         </button>
@@ -180,11 +192,24 @@ export default function EpicsPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
+    <div className="relative p-8 max-w-7xl mx-auto space-y-8 overflow-hidden">
+      {/* Grid texture + glow */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,#ffffff_1px,transparent_0)] [background-size:26px_26px]" />
+      </div>
+      <div className="pointer-events-none absolute -top-24 -left-28 w-[520px] h-[520px] rounded-full bg-sky-500/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-28 -right-32 w-[600px] h-[600px] rounded-full bg-violet-500/10 blur-[130px]" />
+
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        transition={{ duration: 0.45 }}
+        className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6"
+      >
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight drop-shadow-[0_8px_40px_rgba(0,0,0,0.55)]">
             Epics
           </h1>
           <p className="text-slate-400 mt-1 font-medium">
@@ -194,15 +219,21 @@ export default function EpicsPage() {
 
         <button
           onClick={openCreate}
-          className="px-6 py-3 rounded-2xl bg-sky-500 hover:bg-sky-400 text-black font-black transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-sky-500/20"
+          className="px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-400 to-violet-400 hover:from-sky-300 hover:to-violet-300 text-black font-extrabold transition-all active:scale-[0.98] flex items-center gap-2 shadow-lg shadow-sky-500/20"
         >
           <Plus size={18} />
           Add Epic
         </button>
-      </div>
+      </motion.div>
 
       {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        transition={{ duration: 0.45, delay: 0.05 }}
+        className="relative z-10 flex flex-col md:flex-row gap-3 md:items-center md:justify-between"
+      >
         <div className="relative w-full md:w-[380px] group">
           <Search
             size={18}
@@ -222,162 +253,203 @@ export default function EpicsPage() {
           placeholder="Filter by projectId (optional)"
           className="w-full md:w-[320px] bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-sky-500/30 focus:bg-white/[0.05] transition"
         />
-      </div>
+      </motion.div>
 
       {/* List */}
-      {filteredEpics.length === 0 ? (
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center">
-          <Layers className="mx-auto text-slate-500 mb-3" />
-          <p className="text-white font-black text-xl">No epics found</p>
-          <p className="text-slate-400 mt-2">
-            Create an epic to structure your project workflow.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filteredEpics.map((e) => (
-            <div
-              key={e.id}
-              className="p-5 rounded-3xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition flex items-start justify-between gap-4"
+      <div className="relative z-10">
+        {filteredEpics.length === 0 ? (
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.45 }}
+            className="rounded-3xl border border-white/10 bg-white/[0.03] p-12 text-center shadow-[0_18px_60px_-30px_rgba(0,0,0,0.85)] backdrop-blur"
+          >
+            <Layers className="mx-auto text-slate-500 mb-3" />
+            <p className="text-white font-extrabold text-xl">No epics found</p>
+            <p className="text-slate-400 mt-2">
+              Create an epic to structure your project workflow.
+            </p>
+            <button
+              onClick={openCreate}
+              className="mt-6 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-400 to-violet-400 hover:from-sky-300 hover:to-violet-300 text-black font-extrabold transition active:scale-[0.98]"
             >
-              {/* Open details */}
-              <button
-                onClick={() => router.push(`/dashboard/epics/${e.id}`)}
-                className="flex-1 text-left min-w-0"
+              Create your first epic
+            </button>
+          </motion.div>
+        ) : (
+          <div className="space-y-3">
+            {filteredEpics.map((e, idx) => (
+              <motion.div
+                key={e.id}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.35, delay: idx * 0.03 }}
+                whileHover={{ y: -4 }}
+                className="p-5 rounded-3xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition-all shadow-[0_18px_60px_-30px_rgba(0,0,0,0.85)] backdrop-blur flex items-start justify-between gap-4"
               >
-                <p className="text-white font-black truncate">{e.title}</p>
-                <p className="text-slate-400 text-sm mt-1 line-clamp-2">
-                  {e.description || "No description"}
-                </p>
-
-                <div className="mt-3 text-[11px] font-bold text-slate-500">
-                  <span className="px-3 py-1 rounded-full bg-white/[0.04] border border-white/10">
-                    Project:{" "}
-                    <span className="text-sky-300">
-                      {e.projectId.slice(0, 8)}...
-                    </span>
-                  </span>
-                </div>
-              </button>
-
-              <div className="flex items-start gap-2">
+                {/* Open details */}
                 <button
                   onClick={() => router.push(`/dashboard/epics/${e.id}`)}
-                  className="p-2 rounded-2xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition"
-                  title="Open"
+                  className="flex-1 text-left min-w-0"
                 >
-                  <ChevronRight size={16} className="text-slate-300" />
+                  <p className="text-white font-extrabold truncate">
+                    {e.title}
+                  </p>
+                  <p className="text-slate-400 text-sm mt-1 line-clamp-2">
+                    {e.description || "No description"}
+                  </p>
+
+                  <div className="mt-3 text-[11px] font-bold text-slate-500">
+                    <span className="px-3 py-1 rounded-full bg-white/[0.04] border border-white/10">
+                      Project:{" "}
+                      <span className="text-sky-300">
+                        {e.projectId.slice(0, 8)}...
+                      </span>
+                    </span>
+                  </div>
                 </button>
 
-                <button
-                  onClick={() => openEdit(e)}
-                  className="p-2 rounded-2xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition"
-                  title="Edit"
-                >
-                  <Pencil size={16} className="text-slate-300" />
-                </button>
+                <div className="flex items-start gap-2">
+                  <button
+                    onClick={() => router.push(`/dashboard/epics/${e.id}`)}
+                    className="p-2 rounded-2xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition"
+                    title="Open"
+                  >
+                    <ChevronRight size={16} className="text-slate-300" />
+                  </button>
 
-                <button
-                  onClick={() => handleDelete(e.id)}
-                  className="p-2 rounded-2xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 transition"
-                  title="Delete"
-                >
-                  <Trash2 size={16} className="text-rose-300" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+                  <button
+                    onClick={() => openEdit(e)}
+                    className="p-2 rounded-2xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition"
+                    title="Edit"
+                  >
+                    <Pencil size={16} className="text-slate-300" />
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(e.id)}
+                    className="p-2 rounded-2xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 transition"
+                    title="Delete"
+                  >
+                    <Trash2 size={16} className="text-rose-300" />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Modal */}
-      {open && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => !submitting && setOpen(false)}
-          />
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="fixed inset-0 z-[200] flex items-center justify-center p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={() => !submitting && setOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
 
-          <div className="relative w-full max-w-lg rounded-[2rem] bg-[#0b1020] border border-white/10 shadow-2xl p-7">
-            <div className="flex items-start justify-between mb-5">
-              <div>
-                <h3 className="text-xl font-black text-white">
-                  {mode === "CREATE" ? "Create Epic" : "Edit Epic"}
-                </h3>
-                <p className="text-sm text-slate-400 mt-1">
-                  Bigger goals → smaller tasks.
-                </p>
+            <motion.div
+              variants={pop}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ type: "spring", stiffness: 220, damping: 18 }}
+              className="relative w-full max-w-lg rounded-[2rem] bg-white/[0.03] border border-white/10 shadow-[0_22px_90px_-45px_rgba(0,0,0,0.95)] backdrop-blur-xl p-7"
+            >
+              <div className="flex items-start justify-between mb-5">
+                <div>
+                  <h3 className="text-xl font-extrabold text-white">
+                    {mode === "CREATE" ? "Create Epic" : "Edit Epic"}
+                  </h3>
+                  <p className="text-sm text-slate-400 mt-1">
+                    Bigger goals → smaller tasks.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => !submitting && setOpen(false)}
+                  className="p-2 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.07] transition"
+                >
+                  <X size={18} className="text-slate-300" />
+                </button>
               </div>
 
-              <button
-                onClick={() => !submitting && setOpen(false)}
-                className="p-2 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.07] transition"
-              >
-                <X size={18} className="text-slate-300" />
-              </button>
-            </div>
+              <form onSubmit={onSubmit} className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest ml-1">
+                    Epic Title
+                  </label>
+                  <input
+                    value={form.title}
+                    onChange={(ev) =>
+                      setForm({ ...form, title: ev.target.value })
+                    }
+                    className="w-full mt-2 bg-white/[0.03] border border-white/10 text-white rounded-2xl px-4 py-3 outline-none focus:border-sky-500/30 focus:bg-white/[0.05] transition"
+                    placeholder="Frontend Milestones"
+                  />
+                </div>
 
-            <form onSubmit={onSubmit} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                  Epic Title
-                </label>
-                <input
-                  value={form.title}
-                  onChange={(ev) => setForm({ ...form, title: ev.target.value })}
-                  className="w-full mt-2 bg-white/[0.03] border border-white/10 text-white rounded-2xl px-4 py-3 outline-none focus:border-sky-500/30 focus:bg-white/[0.05] transition"
-                  placeholder="Frontend Milestones"
-                />
-              </div>
+                <div>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest ml-1">
+                    Description (optional)
+                  </label>
+                  <textarea
+                    value={form.description}
+                    onChange={(ev) =>
+                      setForm({ ...form, description: ev.target.value })
+                    }
+                    className="w-full mt-2 bg-white/[0.03] border border-white/10 text-white rounded-2xl px-4 py-3 outline-none focus:border-sky-500/30 focus:bg-white/[0.05] transition h-28 resize-none"
+                    placeholder="Short details about this epic..."
+                  />
+                </div>
 
-              <div>
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                  Description (optional)
-                </label>
-                <textarea
-                  value={form.description}
-                  onChange={(ev) =>
-                    setForm({ ...form, description: ev.target.value })
-                  }
-                  className="w-full mt-2 bg-white/[0.03] border border-white/10 text-white rounded-2xl px-4 py-3 outline-none focus:border-sky-500/30 focus:bg-white/[0.05] transition h-28 resize-none"
-                  placeholder="Short details about this epic..."
-                />
-              </div>
+                <div>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest ml-1">
+                    Project ID
+                  </label>
+                  <input
+                    value={form.projectId}
+                    onChange={(ev) =>
+                      setForm({ ...form, projectId: ev.target.value })
+                    }
+                    className="w-full mt-2 bg-white/[0.03] border border-white/10 text-white rounded-2xl px-4 py-3 outline-none focus:border-sky-500/30 transition"
+                    placeholder="project uuid"
+                  />
+                </div>
 
-              <div>
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                  Project ID
-                </label>
-                <input
-                  value={form.projectId}
-                  onChange={(ev) =>
-                    setForm({ ...form, projectId: ev.target.value })
-                  }
-                  className="w-full mt-2 bg-white/[0.03] border border-white/10 text-white rounded-2xl px-4 py-3 outline-none focus:border-sky-500/30 transition"
-                  placeholder="project uuid"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full mt-2 px-6 py-3 rounded-2xl bg-sky-500 hover:bg-sky-400 text-black font-black transition active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Saving...
-                  </>
-                ) : mode === "CREATE" ? (
-                  "Create Epic"
-                ) : (
-                  "Update Epic"
-                )}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full mt-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-400 to-violet-400 hover:from-sky-300 hover:to-violet-300 text-black font-extrabold transition active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Saving...
+                    </>
+                  ) : mode === "CREATE" ? (
+                    "Create Epic"
+                  ) : (
+                    "Update Epic"
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,10 +1,20 @@
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+  Get,
+  Delete,
+} from "@nestjs/common";
+import { WorkflowRunService } from "./workflow.service";
+import { CreateWorkflowRunDto } from "./dto/create-workflow-run.dto";
+import { UpdateWorkflowRunDto } from "./dto/update-workflow-run.dto";
+import { JwtAuthGuard } from "../auth/auth/jwt.guard";
 
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
-import { WorkflowRunService } from './workflow.service';
-import { CreateWorkflowRunDto } from './dto/create-workflow-run.dto';
-import { UpdateWorkflowRunDto } from './dto/update-workflow-run.dto';
-
-@Controller('workflow')
+@Controller("workflow")
+@UseGuards(JwtAuthGuard)
 export class WorkflowRunController {
   constructor(private readonly workflowRunService: WorkflowRunService) {}
 
@@ -13,8 +23,29 @@ export class WorkflowRunController {
     return this.workflowRunService.create(createWorkflowRunDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorkflowRunDto: UpdateWorkflowRunDto) {
+  // ✅ GET ALL runs
+  @Get()
+  findAll() {
+    return this.workflowRunService.findAll();
+  }
+
+  // ✅ GET SINGLE run
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.workflowRunService.findOne(id);
+  }
+
+  @Patch(":id")
+  update(
+    @Param("id") id: string,
+    @Body() updateWorkflowRunDto: UpdateWorkflowRunDto
+  ) {
     return this.workflowRunService.update(id, updateWorkflowRunDto);
+  }
+
+  // ✅ optional delete
+  @Delete(":id")
+  remove(@Param("id") id: string) {
+    return this.workflowRunService.remove(id);
   }
 }

@@ -47,6 +47,11 @@ model User {
   projects Project[] // Projects owned by user
 
   notifications Notification[]
+  isVerified        Boolean  @default(false) // New: track if email/phone is verified
+  
+  // Relations
+  otps              Otp[]    // New: Link to OTP records
+  
 }
 
 // 5. Project Model (Top-level Work Container)

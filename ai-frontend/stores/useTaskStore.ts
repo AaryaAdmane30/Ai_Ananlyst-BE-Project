@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { Task, fetchTasks, createTask, updateTask, deleteTask } from "@/lib/api";
 
@@ -5,9 +7,10 @@ interface TaskState {
   tasks: Task[];
   loading: boolean;
   error: string | null;
+
   fetchAll: () => Promise<void>;
-  addTask: (task: Partial<Task>) => Promise<void>;
-  editTask: (id: string, task: Partial<Task>) => Promise<void>;
+  addTask: (task: Partial<Task>) => Promise<Task>;
+  editTask: (id: string, task: Partial<Task>) => Promise<Task>;
   removeTask: (id: string) => Promise<void>;
 }
 
@@ -22,27 +25,35 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       const data = await fetchTasks();
       set({ tasks: data });
     } catch (err: any) {
-      set({ error: err.message || "Failed to fetch tasks" });
+      const msg = err?.response?.data?.message || err.message || "Failed to fetch tasks";
+      set({ error: msg });
+      throw new Error(msg);
     } finally {
       set({ loading: false });
     }
   },
 
-  addTask: async (task) => {
+  addTask: async (taskData) => {
     try {
-      const newTask = await createTask(task);
-      set({ tasks: [...get().tasks, newTask] });
+      const newTask = await createTask(taskData);
+      set({ tasks: [newTask, ...get().tasks] });
+      return newTask;
     } catch (err: any) {
-      set({ error: err.message || "Failed to add task" });
+      const msg = err?.response?.data?.message || err.message || "Failed to add task";
+      set({ error: msg });
+      throw new Error(msg);
     }
   },
 
-  editTask: async (id, task) => {
+  editTask: async (id, taskData) => {
     try {
-      const updated = await updateTask(id, task);
+      const updated = await updateTask(id, taskData);
       set({ tasks: get().tasks.map((t) => (t.id === id ? updated : t)) });
+      return updated;
     } catch (err: any) {
-      set({ error: err.message || "Failed to update task" });
+      const msg = err?.response?.data?.message || err.message || "Failed to update task";
+      set({ error: msg });
+      throw new Error(msg);
     }
   },
 
@@ -51,7 +62,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       await deleteTask(id);
       set({ tasks: get().tasks.filter((t) => t.id !== id) });
     } catch (err: any) {
-      set({ error: err.message || "Failed to delete task" });
+      const msg = err?.response?.data?.message || err.message || "Failed to delete task";
+      set({ error: msg });
+      throw new Error(msg);
     }
   },
 }));

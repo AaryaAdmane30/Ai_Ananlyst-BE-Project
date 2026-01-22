@@ -7,9 +7,10 @@ interface EpicState {
   epics: Epic[];
   loading: boolean;
   error: string | null;
+
   fetchAll: () => Promise<void>;
-  addEpic: (epic: Partial<Epic>) => Promise<void>;
-  editEpic: (id: string, epic: Partial<Epic>) => Promise<void>;
+  addEpic: (epic: Partial<Epic>) => Promise<Epic>;
+  editEpic: (id: string, epic: Partial<Epic>) => Promise<Epic>;
   removeEpic: (id: string) => Promise<void>;
 }
 
@@ -24,27 +25,37 @@ export const useEpicStore = create<EpicState>((set, get) => ({
       const data = await fetchEpics();
       set({ epics: data });
     } catch (err: any) {
-      set({ error: err.message || "Failed to fetch epics" });
+      const msg = err?.response?.data?.message || err.message || "Failed to fetch epics";
+      set({ error: msg });
+      throw new Error(msg);
     } finally {
       set({ loading: false });
     }
   },
 
-  addEpic: async (epic) => {
+  addEpic: async (epicData) => {
     try {
-      const newEpic = await createEpic(epic);
-      set({ epics: [...get().epics, newEpic] });
+      const newEpic = await createEpic(epicData);
+      set({ epics: [newEpic, ...get().epics] });
+      return newEpic;
     } catch (err: any) {
-      set({ error: err.message || "Failed to add epic" });
+      const msg = err?.response?.data?.message || err.message || "Failed to add epic";
+      set({ error: msg });
+      throw new Error(msg);
     }
   },
 
-  editEpic: async (id, epic) => {
+  editEpic: async (id, epicData) => {
     try {
-      const updated = await updateEpic(id, epic);
-      set({ epics: get().epics.map((e) => (e.id === id ? updated : e)) });
+      const updated = await updateEpic(id, epicData);
+      set({
+        epics: get().epics.map((e) => (e.id === id ? updated : e)),
+      });
+      return updated;
     } catch (err: any) {
-      set({ error: err.message || "Failed to update epic" });
+      const msg = err?.response?.data?.message || err.message || "Failed to update epic";
+      set({ error: msg });
+      throw new Error(msg);
     }
   },
 
@@ -53,7 +64,9 @@ export const useEpicStore = create<EpicState>((set, get) => ({
       await deleteEpic(id);
       set({ epics: get().epics.filter((e) => e.id !== id) });
     } catch (err: any) {
-      set({ error: err.message || "Failed to delete epic" });
+      const msg = err?.response?.data?.message || err.message || "Failed to delete epic";
+      set({ error: msg });
+      throw new Error(msg);
     }
   },
 }));

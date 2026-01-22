@@ -10,7 +10,7 @@ import { PrismaModule } from './prisma/prisma.module';
 
 
 import { UsersModule } from './users/users.module';
-import { TeamMemberModule } from './team-members/team-members.module';
+
 import { SkillModule } from './skills/skill.module';
 import { ProjectModule } from './projects/project.module';
 import { EpicModule } from './epics/epic.module';
@@ -23,13 +23,15 @@ import { AiFeedbackModule } from './ai-feedback/ai-feedback.module';
 import { WorkflowModule } from './workflow/workflow.module';
 import { NotificationModule } from './notification/notification.module';
 import { AgentModule } from './agent/agent.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { TeamMembersModule } from './team-members/team-members.module';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule,
     UsersModule,
-    TeamMemberModule,
+    TeamMembersModule,
     SkillModule,
     ProjectModule,
     EpicModule,
@@ -42,6 +44,7 @@ import { AgentModule } from './agent/agent.module';
     WorkflowModule,
     NotificationModule,
     AgentModule,
+    DashboardModule
     
   ],
   controllers: [AppController],

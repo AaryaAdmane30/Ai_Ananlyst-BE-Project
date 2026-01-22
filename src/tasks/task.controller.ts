@@ -1,10 +1,11 @@
-// task.controller.ts
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { TaskService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { JwtAuthGuard } from '../auth/auth/jwt.guard';
 
 @Controller('tasks')
+@UseGuards(JwtAuthGuard)
 export class TasksController {
   constructor(private service: TaskService) {}
 
@@ -13,9 +14,13 @@ export class TasksController {
     return this.service.create(dto);
   }
 
+  // ✅ dynamic filter support
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(
+    @Query('projectId') projectId?: string,
+    @Query('epicId') epicId?: string
+  ) {
+    return this.service.findAllFiltered(projectId, epicId);
   }
 
   @Get(':id')
@@ -33,4 +38,3 @@ export class TasksController {
     return this.service.remove(id);
   }
 }
-

@@ -7,62 +7,33 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 export class TaskService {
   constructor(private prisma: PrismaService) {}
 
-  // CREATE TASK
   create(dto: CreateTaskDto) {
-    return this.prisma.task.create({
-      data: {
-        title: dto.title,
-        description: dto.description,
-        status: dto.status,
-        projectId: dto.projectId,
-        epicId: dto.epicId,
-      },
-    });
+    return this.prisma.task.create({ data: dto });
   }
+async findAllFiltered(projectId?: string, epicId?: string) {
+  return this.prisma.task.findMany({
+    where: {
+      ...(projectId ? { projectId } : {}),
+      ...(epicId ? { epicId } : {}),
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
 
-  // GET ALL TASKS
-  findAll() {
-    return this.prisma.task.findMany({
-      include: {
-        project: true,
-        epic: true,
-        risks: true,
-        costs: true,
-      },
-    });
-  }
-
-  // GET SINGLE TASK
   findOne(id: string) {
-    return this.prisma.task.findUnique({
-      where: { id },
-      include: {
-        project: true,
-        epic: true,
-        risks: true,
-        costs: true,
-      },
-    });
+    return this.prisma.task.findUnique({ where: { id } });
   }
 
-  // UPDATE TASK
   update(id: string, dto: UpdateTaskDto) {
     return this.prisma.task.update({
       where: { id },
-      data: {
-        title: dto.title,
-        description: dto.description,
-        status: dto.status,
-        projectId: dto.projectId,
-        epicId: dto.epicId,
-      },
+      data: dto,
     });
   }
 
-  // DELETE TASK
   remove(id: string) {
-    return this.prisma.task.delete({
-      where: { id },
-    });
+    return this.prisma.task.delete({ where: { id } });
   }
 }

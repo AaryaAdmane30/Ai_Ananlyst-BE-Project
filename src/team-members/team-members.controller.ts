@@ -2,10 +2,10 @@ import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nes
 import { TeamMemberService } from './team-members.service';
 import { CreateTeamMemberDto } from './dto/create-team-member.dto';
 import { UpdateTeamMemberDto } from './dto/update-team-member.dto';
-// import { JwtAuthGuard } from '../auth/jwt.guard';
+import { JwtAuthGuard } from '../auth/auth/jwt.guard';
 
-// @UseGuards(JwtAuthGuard)
 @Controller('team-members')
+@UseGuards(JwtAuthGuard)
 export class TeamMemberController {
   constructor(private service: TeamMemberService) {}
 

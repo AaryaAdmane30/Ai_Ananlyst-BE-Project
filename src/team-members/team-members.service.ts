@@ -7,74 +7,92 @@ import { UpdateTeamMemberDto } from './dto/update-team-member.dto';
 export class TeamMemberService {
   constructor(private prisma: PrismaService) {}
 
-  // Create a new team member
+  // ✅ Create a new team member
   create(dto: CreateTeamMemberDto) {
     const {
+      name,
+      email,
       role,
       availabilityHours,
       currentWorkload,
       hourlyRate,
       preferences,
       userId,
+      managerId,
     } = dto;
 
     return this.prisma.teamMember.create({
       data: {
+        name,
+        email,
         role,
         availabilityHours,
         currentWorkload,
         hourlyRate,
         preferences,
         userId,
+        managerId,
       },
     });
   }
 
-  // Get all team members
+  // ✅ Get all team members
   findAll() {
     return this.prisma.teamMember.findMany({
       include: {
-        performances: true, 
+        performances: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }
 
-  // Get a single team member by ID
+  // ✅ Get a single team member by ID
   findOne(id: string) {
     return this.prisma.teamMember.findUnique({
       where: { id },
       include: {
-        performances: true, 
+        performances: true,
       },
     });
   }
 
-  // Update a team member
+  
+  // ✅ Update a team member
   update(id: string, dto: UpdateTeamMemberDto) {
     const {
+      name,
+      email,
       role,
       availabilityHours,
       currentWorkload,
       hourlyRate,
       preferences,
       userId,
+      managerId,
     } = dto;
 
     return this.prisma.teamMember.update({
       where: { id },
       data: {
+        name,
+        email,
         role,
         availabilityHours,
         currentWorkload,
         hourlyRate,
         preferences,
         userId,
+        managerId,
       },
     });
   }
 
-  // Delete a team member
+  //  Delete a team member
   remove(id: string) {
-    return this.prisma.teamMember.delete({ where: { id } });
+    return this.prisma.teamMember.delete({
+      where: { id },
+    });
   }
 }

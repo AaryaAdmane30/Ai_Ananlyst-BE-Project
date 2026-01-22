@@ -1,5 +1,4 @@
-// src/epics/epics.controller.ts
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { EpicService } from './epics.service';
 import { CreateEpicDto } from './dto/create-epic.dto';
 import { UpdateEpicDto } from './dto/update-epic.dto';
@@ -13,9 +12,10 @@ export class EpicController {
     return this.service.create(dto);
   }
 
+  // ✅ dynamic filter support
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query("projectId") projectId?: string) {
+    return this.service.findAllFiltered(projectId);
   }
 
   @Get(':id')
